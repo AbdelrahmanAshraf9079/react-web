@@ -1,16 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import './LoginPage.css'
 import axios from 'axios'
 import logo from './logo.png';
 import { Button } from "@material-ui/core";
+import {StateContext} from '../StateProvider';
 
-function LoginPage() {
+
+function LoginPage({history}) {
+const [userstate, setUserState] = useContext(StateContext);
 
 const [userName, setUserName] = useState();
 const [teamName, setTeamName] = useState();
 const [channelName, setChannelName] = useState();
+const [token, setToken] = useState();
 
 const channelOptions = [{label :"Main Channel", value : "mainchannel"},{label :"Client Channel",value : "clientchannel"},{label :"Offer Channel",value :"offerchannel"}];
 const teamOptions = [
@@ -20,18 +24,26 @@ const teamOptions = [
     {label :"Client",value:"client"}
     ];
 
-
-
 async function handleClick() {
 
 let userReq = {
-        "username": userName,
-        "orgName" : teamName
+    "username": userName,
+    "orgName" : teamName
     }
 
-let result = await sendUserReq(userReq);
+//let result = await sendUserReq(userReq);
+//setToken(result.token)
 
-console.log(result)
+let userInput = {
+    "userName" : userName,
+    "teamName" : teamName,
+    "channelName": channelName,
+    "token":token
+    };
+
+setUserState(userInput)
+
+history.push('/MainPage')
 }
 
 
@@ -39,7 +51,7 @@ return (
 <div style={{ display: "flex", justifyContent: "center" ,width:"100%",height:'100%'}}>
 
 
-    <div className= "centerHover" style={{ display: "flex", justifyContent: "center" }}style={{ display: "flex", justifyContent: "center" }}>
+    <div className= "centerHover" style={{ display: "flex", justifyContent: "center" }}>
 
 
         <img src={logo} alt="Logo" className="logo" />
@@ -53,7 +65,7 @@ return (
             name="name"
             placeholder="Username"
             onChange={(val) => {
-            setUserName(val.target.value);
+            setUserName(val.target.value.toLowerCase());
             }}
         />
 
